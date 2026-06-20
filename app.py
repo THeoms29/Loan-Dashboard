@@ -59,8 +59,9 @@ div[data-testid="stPlotlyChart"] {
     background-color: #ffffff;
     border: 3px solid #000000;
     border-radius: 0px;
-    padding: 1rem;
-    box-shadow: 6px 6px 0px 0px #ff9c2a; /* Orange */
+    padding: 0.5rem;
+    box-shadow: 4px 4px 0px 0px #ff9c2a; /* Orange */
+    overflow: visible;
 }
 
 /* DataFrames (Red theme) */
@@ -143,6 +144,12 @@ page = st.sidebar.radio("Navigasi", [
 
 CLR = ['#4C72B0', '#DD8452']
 
+# ── Layout global untuk semua chart Plotly ────────────
+CHART_LAYOUT = dict(
+    legend=dict(orientation='h', yanchor='top', y=-0.15, xanchor='center', x=0.5),
+    margin=dict(l=40, r=20, t=40, b=60)
+)
+
 # ══════════════════════════════════════════════════════
 # HALAMAN 1 — OVERVIEW
 # ══════════════════════════════════════════════════════
@@ -175,6 +182,7 @@ if page == "Overview":
             title='Distribusi Status Loan',
             color_discrete_sequence=CLR
         )
+        fig.update_layout(**CHART_LAYOUT)
         st.plotly_chart(fig, use_container_width=True)
     with col_b:
         st.subheader("Statistik Ringkas Dataset")
@@ -191,7 +199,7 @@ if page == "Overview":
         color_discrete_sequence=CLR,
         markers=True
     )
-    fig_line.update_layout(xaxis_title='Usia', yaxis_title='Rata-rata Income ($K)')
+    fig_line.update_layout(xaxis_title='Usia', yaxis_title='Rata-rata Income ($K)', **CHART_LAYOUT)
     st.plotly_chart(fig_line, use_container_width=True)
 
 # ══════════════════════════════════════════════════════
@@ -202,28 +210,36 @@ elif page == "EDA":
 
     c1, c2 = st.columns(2)
     with c1:
-        st.plotly_chart(px.histogram(df, x='Income', color='Personal Loan',
+        fig_inc = px.histogram(df, x='Income', color='Personal Loan',
             title='Distribusi Income', nbins=40,
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_inc.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_inc, use_container_width=True)
 
-        st.plotly_chart(px.histogram(df, x='CCAvg', color='Personal Loan',
+        fig_cc = px.histogram(df, x='CCAvg', color='Personal Loan',
             title='Distribusi CCAvg', nbins=40,
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_cc.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_cc, use_container_width=True)
 
     with c2:
-        st.plotly_chart(px.histogram(df, x='Age', color='Personal Loan',
+        fig_age = px.histogram(df, x='Age', color='Personal Loan',
             title='Distribusi Usia', nbins=30,
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_age.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_age, use_container_width=True)
 
         df_edu = df.copy()
         df_edu['Pendidikan'] = df_edu['Education'].map(
             {1: 'Undergrad', 2: 'Graduate', 3: 'Professional'})
         edu_cnt = df_edu.groupby(
             ['Pendidikan', 'Personal Loan']).size().reset_index(name='Jumlah')
-        st.plotly_chart(px.bar(edu_cnt, x='Pendidikan', y='Jumlah',
+        fig_edu = px.bar(edu_cnt, x='Pendidikan', y='Jumlah',
             color='Personal Loan', barmode='group',
             title='Distribusi Pendidikan',
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_edu.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_edu, use_container_width=True)
 
 # ══════════════════════════════════════════════════════
 # HALAMAN 3 — LOAN INSIGHT
@@ -236,28 +252,36 @@ elif page == "Loan Insight":
 
     c1, c2 = st.columns(2)
     with c1:
-        st.plotly_chart(px.bar(avg_grp, x='Personal Loan', y='Income',
+        fig_i = px.bar(avg_grp, x='Personal Loan', y='Income',
             color='Personal Loan', title='Rata-rata Income vs Status Loan',
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_i.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_i, use_container_width=True)
 
-        st.plotly_chart(px.box(df, x='Personal Loan', y='Income',
+        fig_box = px.box(df, x='Personal Loan', y='Income',
             color='Personal Loan', title='Sebaran Income per Status Loan',
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_box.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_box, use_container_width=True)
 
     with c2:
-        st.plotly_chart(px.bar(avg_grp, x='Personal Loan', y='CCAvg',
+        fig_ca = px.bar(avg_grp, x='Personal Loan', y='CCAvg',
             color='Personal Loan', title='Rata-rata CCAvg vs Status Loan',
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_ca.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_ca, use_container_width=True)
 
         df_edu = df.copy()
         df_edu['Pendidikan'] = df_edu['Education'].map(
             {1: 'Undergrad', 2: 'Graduate', 3: 'Professional'})
         edu_loan = df_edu.groupby(
             ['Pendidikan', 'Personal Loan']).size().reset_index(name='Jumlah')
-        st.plotly_chart(px.bar(edu_loan, x='Pendidikan', y='Jumlah',
+        fig_el = px.bar(edu_loan, x='Pendidikan', y='Jumlah',
             color='Personal Loan', barmode='group',
             title='Pendidikan vs Status Loan',
-            color_discrete_sequence=CLR), use_container_width=True)
+            color_discrete_sequence=CLR)
+        fig_el.update_layout(**CHART_LAYOUT)
+        st.plotly_chart(fig_el, use_container_width=True)
 
 # ══════════════════════════════════════════════════════
 # HALAMAN 4 — MODEL EVALUATION
