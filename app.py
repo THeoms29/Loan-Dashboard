@@ -90,6 +90,30 @@ div[data-testid="stDataFrame"] {
     transform: translate(5px, 5px) !important;
     box-shadow: 0px 0px 0px 0px #000000 !important;
 }
+
+/* Input Widgets & Text (Neobrutalism) */
+p, .stMarkdown p {
+    font-size: 18px !important;
+    color: #000000 !important;
+}
+
+label {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+}
+
+div[data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    border-radius: 0px !important;
+    box-shadow: 3px 3px 0px 0px #000000 !important;
+    color: #000000 !important;
+}
+
+div[data-baseweb="slider"] {
+    padding-top: 10px;
+}
 </style>
 """, unsafe_allow_html=True)
 
